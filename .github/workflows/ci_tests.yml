@@ -111,7 +111,7 @@ jobs:
         }
 
   run-clang-tidy:
-    uses: Honigkuchen/infra-workflows/.github/workflows/reusable-beman-clang-tidy.yml@main
+    uses: Honigkuchen/infra-workflows-fork/.github/workflows/reusable-beman-clang-tidy.yml@hauboldjonas/ci/add-clang-tidy-reusable-workflow
     with:
       matrix_config: >
         [
