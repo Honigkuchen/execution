@@ -31,6 +31,7 @@ jobs:
         ]
 
   build-and-test:
+    name: "Build, test and run clang-tidy"
     runs-on: ubuntu-latest
     steps:
       - name: Build and test
