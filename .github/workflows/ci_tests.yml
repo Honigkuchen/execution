@@ -107,11 +107,9 @@ jobs:
 
   run-clang-tidy:
     steps:
-      - name: Build
-        steps:
+      - name: Build & Run Clang-Tidy
+        run: |
           cmake -B build -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
-      - name: Run clang-tidy
-        steps:
           clang-tidy --config-file=.clang-tidy -p build -checks='-*,bugprone-*' examples/*
 
   create-issue-when-fault:
