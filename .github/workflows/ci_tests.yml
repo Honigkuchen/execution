@@ -110,7 +110,10 @@ jobs:
     container:
       image: ghcr.io/bemanproject/infra-containers-clang:latest
     steps:
-      - name: Build & Run Clang-Tidy
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build & run clang-tidy
         run: |
           cmake -B build -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
           clang-tidy --config-file=.clang-tidy -p build -checks='-*,bugprone-*' examples/*
