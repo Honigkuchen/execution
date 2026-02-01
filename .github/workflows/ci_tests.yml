@@ -109,7 +109,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        config: ${{ fromJson(${{ env.MATRIX_CONFIG }}) }}
+        config: ${{ fromJson(env.MATRIX_CONFIG) }}
     steps:
       - name: Build and test
         uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-build-and-test.yml@1.2.1
