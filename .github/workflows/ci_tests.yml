@@ -30,6 +30,7 @@ jobs:
         ]
 
   build-and-test:
+    runs-on: ubuntu-latest
     steps:
       - uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-build-and-test.yml@1.2.1
         with:
