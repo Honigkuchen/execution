@@ -112,7 +112,6 @@ jobs:
 
   run-clang-tidy:
     uses: Honigkuchen/infra-workflows/.github/workflows/reusable-beman-clang-tidy.yml@main
-    continue-on-error: true
     with:
       matrix_config: >
         [
