@@ -124,9 +124,11 @@ jobs:
           cmake -B $build_dir -D CMAKE_CXX_COMPILER=/usr/local/bin/clang -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: clang-tidy src
+        run: |
           run-clang-tidy $clang_tidy_args src
 
       - name: clang-tidy examples
+        run: |
           run-clang-tidy $clang_tidy_args examples
 
   create-issue-when-fault:
