@@ -30,88 +30,89 @@ jobs:
         ]
 
   build-and-test:
-    - uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-build-and-test.yml@1.2.1
-      with:
-        matrix_config: >
-          {
-            "gcc": [
-              { "versions": ["15"],
-                "tests": [
-                  { "cxxversions": ["c++26"],
-                    "tests": [
-                      { "stdlibs": ["libstdc++"],
-                        "tests": [
-                          "Debug.Default", "Release.Default",
-                          "Release.MaxSan", "Debug.Werror",
-                          "Debug.Dynamic", "Debug.Coverage"
-                        ]
-                      }
-                    ]
-                  },
-                  { "cxxversions": ["c++23"],
-                    "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
-                  }
-                ]
-              },
-              { "versions": ["14"],
-                "tests": [
-                  { "cxxversions": ["c++26", "c++23"],
-                    "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
-                  }
-                ]
-              }
-            ],
-            "clang": [
-              { "versions": ["21"],
-                "tests": [
-                  {"cxxversions": ["c++26"],
-                    "tests": [
-                      { "stdlibs": ["libc++"],
-                        "tests": [
-                          "Debug.Default", "Release.Default", "Release.MaxSan",
-                          "Debug.Dynamic"
-                        ]
-                      }
-                    ]
-                  },
-                  { "cxxversions": ["c++23"],
-                    "tests": [
-                      {"stdlibs": ["libc++"], "tests": ["Release.Default"]}
-                    ]
-                  }
-                ]
-              },
-              { "versions": ["20", "19"],
-                "tests": [
-                  { "cxxversions": ["c++26", "c++23"],
-                    "tests": [
-                      {"stdlibs": ["libc++"], "tests": ["Release.Default"]}
-                    ]
-                  }
-                ]
-              }
-            ],
-            "msvc": [
-              { "versions": ["latest"],
-                "tests": [
-                  { "cxxversions": ["c++23"],
-                    "tests": [
-                      { "stdlibs": ["stl"],
-                        "tests": ["Debug.Default", "Release.Default", "Release.MaxSan"]
-                      }
-                    ]
-                  }
-                ]
-              }
+    steps:
+      - uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-build-and-test.yml@1.2.1
+        with:
+          matrix_config: >
+            {
+              "gcc": [
+                { "versions": ["15"],
+                  "tests": [
+                    { "cxxversions": ["c++26"],
+                      "tests": [
+                        { "stdlibs": ["libstdc++"],
+                          "tests": [
+                            "Debug.Default", "Release.Default",
+                            "Release.MaxSan", "Debug.Werror",
+                            "Debug.Dynamic", "Debug.Coverage"
+                          ]
+                        }
+                      ]
+                    },
+                    { "cxxversions": ["c++23"],
+                      "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
+                    }
+                  ]
+                },
+                { "versions": ["14"],
+                  "tests": [
+                    { "cxxversions": ["c++26", "c++23"],
+                      "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
+                    }
+                  ]
+                }
+              ],
+              "clang": [
+                { "versions": ["21"],
+                  "tests": [
+                    {"cxxversions": ["c++26"],
+                      "tests": [
+                        { "stdlibs": ["libc++"],
+                          "tests": [
+                            "Debug.Default", "Release.Default", "Release.MaxSan",
+                            "Debug.Dynamic"
+                          ]
+                        }
+                      ]
+                    },
+                    { "cxxversions": ["c++23"],
+                      "tests": [
+                        {"stdlibs": ["libc++"], "tests": ["Release.Default"]}
+                      ]
+                    }
+                  ]
+                },
+                { "versions": ["20", "19"],
+                  "tests": [
+                    { "cxxversions": ["c++26", "c++23"],
+                      "tests": [
+                        {"stdlibs": ["libc++"], "tests": ["Release.Default"]}
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "msvc": [
+                { "versions": ["latest"],
+                  "tests": [
+                    { "cxxversions": ["c++23"],
+                      "tests": [
+                        { "stdlibs": ["stl"],
+                          "tests": ["Debug.Default", "Release.Default", "Release.MaxSan"]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+      - uses: Honigkuchen/infra-workflows/.github/workflows/reusable-beman-clang-tidy.yml@main
+        with:
+          matrix_config: >
+            [
+              {"options": "", "files": "examples", "upload_results": false},
+              {"options": "-checks='-*,bugprone-*'", "files": "examples", "upload_results": false},
             ]
-          }
-    - uses: Honigkuchen/infra-workflows/.github/workflows/reusable-beman-clang-tidy.yml@main
-      with:
-        matrix_config: >
-          [
-            {"options": "", "files": "examples", "upload_results": false},
-            {"options": "-checks='-*,bugprone-*'", "files": "examples", "upload_results": false},
-          ]
 
   clang-tidy-check:
     if: false
