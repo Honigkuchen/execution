@@ -108,18 +108,26 @@ jobs:
           ]
         }
 
-  run-clang-tidy:
+  checkout-and-build:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/bemanproject/infra-containers-clang:latest
+    env:
+      build_dir: build
+      clang_tidy_args: "-config-file=.clang-tidy -checks='-*,bugprone-*'"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Build & run clang-tidy
         run: |
-          cmake -B build -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
-          clang-tidy --config-file=.clang-tidy -p build -checks='-*,bugprone-*' examples/*
+          cmake -B $build_dir -D CMAKE_CXX_COMPILER=/usr/local/bin/clang -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: clang-tidy src
+          run-clang-tidy $clang_tidy_args src
+
+      - name: clang-tidy examples
+          run-clang-tidy $clang_tidy_args examples
 
   create-issue-when-fault:
     needs: [preset-test, build-and-test]
