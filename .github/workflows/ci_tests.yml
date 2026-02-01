@@ -114,7 +114,7 @@ jobs:
       image: ghcr.io/bemanproject/infra-containers-clang:latest
     env:
       build_dir: build
-      clang_tidy_args: "-config-file=.clang-tidy -checks='-*,bugprone-*'"
+      clang_tidy_args: "-config-file=.clang-tidy -p $build_dir -checks='-*,bugprone-*'"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
