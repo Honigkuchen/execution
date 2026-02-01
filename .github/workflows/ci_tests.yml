@@ -14,78 +14,7 @@ on:
 
 env:
   MATRIX_CONFIG: >
-    {
-      "gcc": [
-        { "versions": ["15"],
-          "tests": [
-            { "cxxversions": ["c++26"],
-              "tests": [
-                { "stdlibs": ["libstdc++"],
-                  "tests": [
-                    "Debug.Default", "Release.Default",
-                    "Release.MaxSan", "Debug.Werror",
-                    "Debug.Dynamic", "Debug.Coverage"
-                  ]
-                }
-              ]
-            },
-            { "cxxversions": ["c++23"],
-              "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
-            }
-          ]
-        },
-        { "versions": ["14"],
-          "tests": [
-            { "cxxversions": ["c++26", "c++23"],
-              "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
-            }
-          ]
-        }
-      ],
-      "clang": [
-        { "versions": ["21"],
-          "tests": [
-            {"cxxversions": ["c++26"],
-              "tests": [
-                { "stdlibs": ["libc++"],
-                  "tests": [
-                    "Debug.Default", "Release.Default", "Release.MaxSan",
-                    "Debug.Dynamic"
-                  ]
-                }
-              ]
-            },
-            { "cxxversions": ["c++23"],
-              "tests": [
-                {"stdlibs": ["libc++"], "tests": ["Release.Default"]}
-              ]
-            }
-          ]
-        },
-        { "versions": ["20", "19"],
-          "tests": [
-            { "cxxversions": ["c++26", "c++23"],
-              "tests": [
-                {"stdlibs": ["libc++"], "tests": ["Release.Default"]}
-              ]
-            }
-          ]
-        }
-      ],
-      "msvc": [
-        { "versions": ["latest"],
-          "tests": [
-            { "cxxversions": ["c++23"],
-              "tests": [
-                { "stdlibs": ["stl"],
-                  "tests": ["Debug.Default", "Release.Default", "Release.MaxSan"]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
+
 
 jobs:
   beman-submodule-check:
@@ -105,18 +34,91 @@ jobs:
         ]
 
   build-and-test:
-    name: "Build, test and run clang-tidy"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        config: ${{ fromJson(env.MATRIX_CONFIG) }}
+    uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-build-and-test.yml@1.2.1
+    with:
+      matrix_config: >
+        {
+          "gcc": [
+            { "versions": ["15"],
+              "tests": [
+                { "cxxversions": ["c++26"],
+                  "tests": [
+                    { "stdlibs": ["libstdc++"],
+                      "tests": [
+                        "Debug.Default", "Release.Default",
+                        "Release.MaxSan", "Debug.Werror",
+                        "Debug.Dynamic", "Debug.Coverage"
+                      ]
+                    }
+                  ]
+                },
+                { "cxxversions": ["c++23"],
+                  "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
+                }
+              ]
+            },
+            { "versions": ["14"],
+              "tests": [
+                { "cxxversions": ["c++26", "c++23"],
+                  "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
+                }
+              ]
+            }
+          ],
+          "clang": [
+            { "versions": ["21"],
+              "tests": [
+                {"cxxversions": ["c++26"],
+                  "tests": [
+                    { "stdlibs": ["libc++"],
+                      "tests": [
+                        "Debug.Default", "Release.Default", "Release.MaxSan",
+                        "Debug.Dynamic"
+                      ]
+                    }
+                  ]
+                },
+                { "cxxversions": ["c++23"],
+                  "tests": [
+                    {"stdlibs": ["libc++"], "tests": ["Release.Default"]}
+                  ]
+                }
+              ]
+            },
+            { "versions": ["20", "19"],
+              "tests": [
+                { "cxxversions": ["c++26", "c++23"],
+                  "tests": [
+                    {"stdlibs": ["libc++"], "tests": ["Release.Default"]}
+                  ]
+                }
+              ]
+            }
+          ],
+          "msvc": [
+            { "versions": ["latest"],
+              "tests": [
+                { "cxxversions": ["c++23"],
+                  "tests": [
+                    { "stdlibs": ["stl"],
+                      "tests": ["Debug.Default", "Release.Default", "Release.MaxSan"]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+
+  run-clang-tidy:
     steps:
-      - name: Build and test
-        uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-build-and-test.yml@1.2.1
-        with:
-          matrix_config: ${{ env.MATRIX_CONFIG }}
-      - name: Run clang-tidy
-        if: startsWith(matrix.config.compiler, 'clang')
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Config cmake
+        run: |
+          CXX=/usr/local/bin/clang++
+          cmake -B build -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
+      - name: Run clang-tidy checks
         uses: Honigkuchen/infra-workflows/.github/workflows/reusable-beman-clang-tidy.yml@main
         with:
           matrix_config: >
@@ -124,6 +126,7 @@ jobs:
               {"options": "", "files": "examples", "upload_results": false},
               {"options": "-checks='-*,bugprone-*'", "files": "examples", "upload_results": false},
             ]
+
 
   clang-tidy-check:
     if: false
