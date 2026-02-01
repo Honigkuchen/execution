@@ -113,23 +113,23 @@ jobs:
     container:
       image: ghcr.io/bemanproject/infra-containers-clang:latest
     env:
-      build_dir: build
-      clang_tidy_args: "-config-file=.clang-tidy -p $build_dir -checks='-*,bugprone-*'"
+      BUILD_DIR: build
+      CLANG_TIDY_ARGS: "-config-file=.clang-tidy -p build -checks='-*,bugprone-*'"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Build & run clang-tidy
         run: |
-          cmake -B $build_dir -D CMAKE_CXX_COMPILER=/usr/local/bin/clang -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
+          cmake -B $BUILD_DIR -D CMAKE_CXX_COMPILER=/usr/local/bin/clang -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: clang-tidy src
         run: |
-          run-clang-tidy $clang_tidy_args src
+          run-clang-tidy $CLANG_TIDY_ARGS src
 
       - name: clang-tidy examples
         run: |
-          run-clang-tidy $clang_tidy_args examples
+          run-clang-tidy $CLANG_TIDY_ARGS examples
 
   create-issue-when-fault:
     needs: [preset-test, build-and-test]
