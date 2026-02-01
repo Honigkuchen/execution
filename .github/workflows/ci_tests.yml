@@ -119,32 +119,6 @@ jobs:
           {"options": "-checks='-*,bugprone-*'", "files": "examples", "upload_results": false},
         ]
 
-
-  clang-tidy-check:
-    if: false
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/bemanproject/infra-containers-clang:latest
-    env:
-      BUILD_DIR: build
-      CLANG_TIDY_ARGS: "-p build"
-      CXX: /usr/local/bin/clang++
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build & run clang-tidy
-        run: |
-          cmake -B $BUILD_DIR -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
-
-      - name: clang-tidy src
-        run: |
-          run-clang-tidy $CLANG_TIDY_ARGS src
-
-      - name: clang-tidy examples
-        run: |
-          run-clang-tidy $CLANG_TIDY_ARGS examples
-
   create-issue-when-fault:
     needs: [preset-test, build-and-test]
     if: failure() && github.event_name == 'schedule'
