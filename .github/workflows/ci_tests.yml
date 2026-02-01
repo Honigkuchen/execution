@@ -106,6 +106,9 @@ jobs:
         }
 
   run-clang-tidy:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/bemanproject/infra-containers-clang:latest
     steps:
       - name: Build & Run Clang-Tidy
         run: |
