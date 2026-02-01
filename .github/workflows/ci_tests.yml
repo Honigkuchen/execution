@@ -105,6 +105,15 @@ jobs:
           ]
         }
 
+  run-clang-tidy:
+    steps:
+      - name: Build
+        steps:
+          cmake -B build -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
+      - name: Run clang-tidy
+        steps:
+          clang-tidy --config-file=.clang-tidy -p build -checks='-*,bugprone-*' examples/*
+
   create-issue-when-fault:
     needs: [preset-test, build-and-test]
     if: failure() && github.event_name == 'schedule'
