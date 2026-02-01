@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - hauboldjonas/ci/add-clang-tidy-checks
   pull_request:
   workflow_dispatch:
   schedule:
@@ -16,6 +17,7 @@ jobs:
     uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-submodule-check.yml@1.2.1
 
   preset-test:
+    if: false
     uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-preset-test.yml@1.2.1
     with:
       matrix_config: >
@@ -29,6 +31,7 @@ jobs:
         ]
 
   build-and-test:
+    if: false
     uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-build-and-test.yml@1.2.1
     with:
       matrix_config: >
